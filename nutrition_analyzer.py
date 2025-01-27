@@ -5,11 +5,13 @@ from dotenv import load_dotenv
 import os
 
 # Load environment variables
-load_dotenv()
+load_dotenv()  # Ensure this is called to load the .env file
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-if not GOOGLE_API_KEY:
-    raise ValueError("GOOGLE_API_KEY not found in environment variables")
 
+if not GOOGLE_API_KEY:
+    raise ValueError("GOOGLE_API_KEY not found in environment variables. Please set it in a .env file or as an environment variable.")
+
+# Configure the Gemini API
 genai.configure(api_key=GOOGLE_API_KEY)
 
 class NutritionAnalyzer:
