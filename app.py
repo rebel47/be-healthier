@@ -192,7 +192,8 @@ if st.session_state.get("authentication_status"):
             save_user_data(st.session_state["username"], user_data)
             st.success("Profile updated successfully!")
 
-def food_analyzer_page():
+    # Other page functions (food_analyzer_page, exercise_page, progress_tracker_page) remain the same
+  def food_analyzer_page():
     st.header("Food Analyzer & Logger")
     
     # Create tabs for different input methods
@@ -408,54 +409,9 @@ def progress_tracker_page():
             total_loss = progress_df['weight'].iloc[-1] - progress_df['weight'].iloc[0]
             st.metric("Total Weight Change", f"{total_loss:.1f} kg")
 
-def main():
-    st.set_page_config(page_title="Health & Fitness Tracker", layout="wide")
-    
-    # Navigation
-    pages = {
-        "Home": home_page,
-        "User Profile": profile_page,
-        "Food Analyzer": food_analyzer_page,
-        "Exercise Tracker": exercise_page,
-        "Progress Tracker": progress_tracker_page
-    }
-    st.sidebar.title("Navigation")
-    page = st.sidebar.radio("Go to", list(pages.keys()))
-    
-    # Show user stats in sidebar if profile exists
-    user_data = load_user_data()
-    if user_data:
-        st.sidebar.subheader("Daily Targets")
-        daily_calories = calculate_daily_calories(
-            user_data['weight'], user_data['height'], user_data['age'],
-            user_data['gender'], user_data['exercise_level'], user_data['goal']
-        )
-        
-        # Get today's totals
-        food_log = load_food_log(datetime.now().strftime("%Y-%m-%d"))
-        workout_log = load_workout_log(datetime.now().strftime("%Y-%m-%d"))
-        
-        calories_consumed = food_log['calories'].sum()
-        calories_burned = workout_log['calories_burned'].sum()
-        
-        # Display metrics
-        st.sidebar.metric("Calorie Target", f"{daily_calories}")
-        st.sidebar.metric("Calories Consumed", f"{calories_consumed:.0f}")
-        st.sidebar.metric("Calories Burned", f"{calories_burned:.0f}")
-        st.sidebar.metric("Net Calories", 
-                         f"{calories_consumed - calories_burned:.0f}")
-        
-        # Display macronutrient breakdown
-        if not food_log.empty:
-            st.sidebar.subheader("Today's Macros")
-            st.sidebar.metric("Protein", f"{food_log['protein'].sum():.1f}g")
-            st.sidebar.metric("Carbs", f"{food_log['carbs'].sum():.1f}g")
-            st.sidebar.metric("Fat", f"{food_log['fat'].sum():.1f}g")
-    
-    # Render selected page
-    pages[page]()
+    # Ensure all database operations use the username to fetch/save user-specific data
 
-def main():
+    def main():
         st.set_page_config(page_title="Health & Fitness Tracker", layout="wide")
         
         # Navigation
@@ -502,5 +458,5 @@ def main():
         # Render selected page
         pages[page]()
 
-    if __name__ == "__main__":
-        main()
+if __name__ == "__main__":
+    main()
