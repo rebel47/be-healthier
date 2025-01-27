@@ -42,7 +42,7 @@
 ### **Steps**
 1. Clone the repository:
    ```bash
-   git clone https://github.com/rebel47/health-app.git
+   git clone https://github.com/rebel47/be-healthier.git
    cd be-healthier
    ```
 
