@@ -192,224 +192,221 @@ if st.session_state.get("authentication_status"):
             save_user_data(st.session_state["username"], user_data)
             st.success("Profile updated successfully!")
 
-    # Other page functions (food_analyzer_page, exercise_page, progress_tracker_page) remain the same
-  def food_analyzer_page():
-    st.header("Food Analyzer & Logger")
-    
-    # Create tabs for different input methods
-    tab1, tab2 = st.tabs(["📸 Food Image Analysis", "✍️ Manual Entry"])
-    
-    with tab1:
-        st.subheader("Analyze Food Image")
-        image_type = st.radio("What are you uploading?", ["Food Label", "Food Image"])
-        uploaded_file = st.file_uploader(
-            "Upload Image", 
-            type=['png', 'jpg', 'jpeg'],
-            help="Upload either a nutrition label or a photo of your food"
-        )
+    def food_analyzer_page():
+        st.header("Food Analyzer & Logger")
         
-        # Initialize session state for analysis result
-        if "analysis_result" not in st.session_state:
-            st.session_state.analysis_result = None
+        # Create tabs for different input methods
+        tab1, tab2 = st.tabs(["📸 Food Image Analysis", "✍️ Manual Entry"])
         
-        if uploaded_file and st.button("Analyze"):
-            with st.spinner("Analyzing image..."):
-                try:
-                    analyzer = NutritionAnalyzer()
-                    prompt = get_analysis_prompt(image_type)
-                    processed_image = analyzer.preprocess_image(uploaded_file)
-                    result = analyzer.extract_nutrition_info(processed_image, prompt)
-                    
-                    if result is None:
-                        st.error("Analysis failed: No result returned")
-                        return
-                    
-                    # Store the result in session state
-                    st.session_state.analysis_result = {
-                        "result": result,
-                        "image_type": image_type,
-                        "uploaded_file": uploaded_file
-                    }
-                    
-                except Exception as e:
-                    st.error(f"Error during analysis: {str(e)}")
-        
-        # Display analysis results if available
-        if st.session_state.analysis_result:
-            result = st.session_state.analysis_result["result"]
-            image_type = st.session_state.analysis_result["image_type"]
-            uploaded_file = st.session_state.analysis_result["uploaded_file"]
+        with tab1:
+            st.subheader("Analyze Food Image")
+            image_type = st.radio("What are you uploading?", ["Food Label", "Food Image"])
+            uploaded_file = st.file_uploader(
+                "Upload Image", 
+                type=['png', 'jpg', 'jpeg'],
+                help="Upload either a nutrition label or a photo of your food"
+            )
             
-            st.subheader("Analysis Results")
-            col1, col2 = st.columns(2)
+            # Initialize session state for analysis result
+            if "analysis_result" not in st.session_state:
+                st.session_state.analysis_result = None
             
-            with col1:
-                st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
+            if uploaded_file and st.button("Analyze"):
+                with st.spinner("Analyzing image..."):
+                    try:
+                        analyzer = NutritionAnalyzer()
+                        prompt = get_analysis_prompt(image_type)
+                        processed_image = analyzer.preprocess_image(uploaded_file)
+                        result = analyzer.extract_nutrition_info(processed_image, prompt)
+                        
+                        if result is None:
+                            st.error("Analysis failed: No result returned")
+                            return
+                        
+                        # Store the result in session state
+                        st.session_state.analysis_result = {
+                            "result": result,
+                            "image_type": image_type,
+                            "uploaded_file": uploaded_file
+                        }
+                        
+                    except Exception as e:
+                        st.error(f"Error during analysis: {str(e)}")
             
-            with col2:
-                if image_type == "Food Label":
-                    st.write("📊 Nutritional Information:")
-                    st.write(f"🔸 Calories: {result['calories']} kcal")
-                    st.write(f"🔸 Protein: {result.get('protein', 0)}g")
-                    st.write(f"🔸 Carbs: {result.get('carbohydrates', 0)}g")
-                    st.write(f"🔸 Fat: {result.get('fat', 0)}g")
-                else:
-                    st.write("🍽️ Detected Food Items:")
-                    for item in result['food_items']:
-                        st.write(f"🔸 {item['name']}: {item['calories']} kcal")
-                    st.write("📊 Total Nutritional Information:")
-                    st.write(f"🔸 Total Calories: {result['total_calories']} kcal")
-                    st.write(f"🔸 Total Protein: {result.get('total_protein', 0)}g")
-                    st.write(f"🔸 Total Carbs: {result.get('total_carbs', 0)}g")
-                    st.write(f"🔸 Total Fat: {result.get('total_fat', 0)}g")
-            
-            # Add to food log section
-            st.subheader("Add to Food Log")
-            col1, col2 = st.columns(2)
-            with col1:
-                meal_type = st.selectbox("Meal Type", ["Breakfast", "Lunch", "Dinner", "Snack"])
-                food_name = st.text_input("Food Name", 
-                                        value="Analyzed Food Item" if image_type == "Food Label" 
-                                        else ", ".join([item['name'] for item in result.get('food_items', [])]))
-            
-            if st.button("Add to Food Log"):
-                if image_type == "Food Label":
-                    total_calories = result['calories']
-                    total_protein = result.get('protein', 0)
-                    total_carbs = result.get('carbohydrates', 0)
-                    total_fat = result.get('fat', 0)
-                else:
-                    total_calories = result['total_calories']
-                    total_protein = result.get('total_protein', 0)
-                    total_carbs = result.get('total_carbs', 0)
-                    total_fat = result.get('total_fat', 0)
+            # Display analysis results if available
+            if st.session_state.analysis_result:
+                result = st.session_state.analysis_result["result"]
+                image_type = st.session_state.analysis_result["image_type"]
+                uploaded_file = st.session_state.analysis_result["uploaded_file"]
                 
+                st.subheader("Analysis Results")
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
+                
+                with col2:
+                    if image_type == "Food Label":
+                        st.write("📊 Nutritional Information:")
+                        st.write(f"🔸 Calories: {result['calories']} kcal")
+                        st.write(f"🔸 Protein: {result.get('protein', 0)}g")
+                        st.write(f"🔸 Carbs: {result.get('carbohydrates', 0)}g")
+                        st.write(f"🔸 Fat: {result.get('fat', 0)}g")
+                    else:
+                        st.write("🍽️ Detected Food Items:")
+                        for item in result['food_items']:
+                            st.write(f"🔸 {item['name']}: {item['calories']} kcal")
+                        st.write("📊 Total Nutritional Information:")
+                        st.write(f"🔸 Total Calories: {result['total_calories']} kcal")
+                        st.write(f"🔸 Total Protein: {result.get('total_protein', 0)}g")
+                        st.write(f"🔸 Total Carbs: {result.get('total_carbs', 0)}g")
+                        st.write(f"🔸 Total Fat: {result.get('total_fat', 0)}g")
+                
+                # Add to food log section
+                st.subheader("Add to Food Log")
+                col1, col2 = st.columns(2)
+                with col1:
+                    meal_type = st.selectbox("Meal Type", ["Breakfast", "Lunch", "Dinner", "Snack"])
+                    food_name = st.text_input("Food Name", 
+                                            value="Analyzed Food Item" if image_type == "Food Label" 
+                                            else ", ".join([item['name'] for item in result.get('food_items', [])]))
+                
+                if st.button("Add to Food Log"):
+                    if image_type == "Food Label":
+                        total_calories = result['calories']
+                        total_protein = result.get('protein', 0)
+                        total_carbs = result.get('carbohydrates', 0)
+                        total_fat = result.get('fat', 0)
+                    else:
+                        total_calories = result['total_calories']
+                        total_protein = result.get('total_protein', 0)
+                        total_carbs = result.get('total_carbs', 0)
+                        total_fat = result.get('total_fat', 0)
+                    
+                    entry = {
+                        'date': datetime.now().strftime("%Y-%m-%d"),
+                        'meal_type': meal_type,
+                        'food_item': food_name,
+                        'calories': float(total_calories),
+                        'protein': float(total_protein),
+                        'carbs': float(total_carbs),
+                        'fat': float(total_fat)
+                    }
+                    save_food_log(st.session_state["username"], entry)
+                    st.success("✅ Food added to log successfully!")
+                    # Clear the analysis result after adding to log
+                    st.session_state.analysis_result = None
+        
+        with tab2:
+            st.subheader("Manual Food Entry")
+            col1, col2 = st.columns(2)
+            with col1:
+                meal_type = st.selectbox("Select Meal Type", ["Breakfast", "Lunch", "Dinner", "Snack"], key="manual_meal_type")
+                food_name = st.text_input("Food Item Name", key="manual_food_name")
+                calories = st.number_input("Calories", 0, 2000, key="manual_calories")
+            with col2:
+                protein = st.number_input("Protein (g)", 0.0, 200.0, key="manual_protein")
+                carbs = st.number_input("Carbohydrates (g)", 0.0, 200.0, key="manual_carbs")
+                fat = st.number_input("Fat (g)", 0.0, 200.0, key="manual_fat")
+            
+            if st.button("Add Food Item", key="manual_add_food"):
                 entry = {
                     'date': datetime.now().strftime("%Y-%m-%d"),
                     'meal_type': meal_type,
                     'food_item': food_name,
-                    'calories': float(total_calories),
-                    'protein': float(total_protein),
-                    'carbs': float(total_carbs),
-                    'fat': float(total_fat)
+                    'calories': float(calories),
+                    'protein': float(protein),
+                    'carbs': float(carbs),
+                    'fat': float(fat)
                 }
-                save_food_log(entry)
-                st.success("✅ Food added to log successfully!")
-                # Clear the analysis result after adding to log
-                st.session_state.analysis_result = None
-    
-    with tab2:
-        st.subheader("Manual Food Entry")
+                save_food_log(st.session_state["username"], entry)
+                st.success("✅ Food item added to log!")
+        
+        # Display today's food log
+        st.subheader("Today's Food Log")
+        food_log = load_food_log(st.session_state["username"], datetime.now().strftime("%Y-%m-%d"))
+        if not food_log.empty:
+            st.dataframe(food_log)
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("Total Calories", f"{food_log['calories'].sum():.0f} kcal")
+            with col2:
+                st.metric("Total Protein", f"{food_log['protein'].sum():.1f}g")
+            with col3:
+                st.metric("Total Carbs", f"{food_log['carbs'].sum():.1f}g")
+
+    def exercise_page():
+        st.header("Exercise Tracker")
+        
+        user_data = load_user_data(st.session_state["username"])
+        if not user_data:
+            st.warning("Please complete your profile first!")
+            return
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.subheader("Log Exercise")
+            exercise_type = st.selectbox("Exercise Type", ["Cardio", "Strength", "Flexibility", "HIIT"])
+            exercise = st.selectbox("Exercise", ["Running", "Cycling", "Swimming", "Push-ups", "Yoga", "Burpees"])
+            duration = st.number_input("Duration (minutes)", 1, 180)
+            
+            calories_burned = duration * 7  # Example calculation (adjust based on exercise type)
+            
+            if st.button("Log Exercise"):
+                entry = {
+                    'date': datetime.now().strftime("%Y-%m-%d"),
+                    'exercise_type': exercise_type,
+                    'exercise': exercise,
+                    'duration': duration,
+                    'calories_burned': calories_burned
+                }
+                save_workout_log(st.session_state["username"], entry)
+                st.success("Exercise logged successfully!")
+        
+        with col2:
+            st.subheader("Today's Exercise Summary")
+            workout_log = load_workout_log(st.session_state["username"], datetime.now().strftime("%Y-%m-%d"))
+            if not workout_log.empty:
+                st.dataframe(workout_log)
+                st.metric("Total Calories Burned", f"{workout_log['calories_burned'].sum():.0f}")
+
+    def progress_tracker_page():
+        st.header("Progress Tracker")
+        
+        user_data = load_user_data(st.session_state["username"])
+        if not user_data:
+            st.warning("Please complete your profile first!")
+            return
+        
+        # Weight tracking
+        progress_df = load_progress(st.session_state["username"])
+        
         col1, col2 = st.columns(2)
         with col1:
-            meal_type = st.selectbox("Select Meal Type", ["Breakfast", "Lunch", "Dinner", "Snack"], key="manual_meal_type")
-            food_name = st.text_input("Food Item Name", key="manual_food_name")
-            calories = st.number_input("Calories", 0, 2000, key="manual_calories")
-        with col2:
-            protein = st.number_input("Protein (g)", 0.0, 200.0, key="manual_protein")
-            carbs = st.number_input("Carbohydrates (g)", 0.0, 200.0, key="manual_carbs")
-            fat = st.number_input("Fat (g)", 0.0, 200.0, key="manual_fat")
+            st.subheader("Log Today's Weight")
+            weight = st.number_input("Weight (kg)", 30.0, 200.0, user_data['weight'])
+            if st.button("Log Weight"):
+                entry = {
+                    'date': datetime.now().strftime("%Y-%m-%d"),
+                    'weight': weight,
+                    'calories_consumed': 0,  # Placeholder
+                    'exercise_minutes': 0    # Placeholder
+                }
+                save_progress(st.session_state["username"], entry)
+                st.success("Weight logged successfully!")
         
-        if st.button("Add Food Item", key="manual_add_food"):
-            entry = {
-                'date': datetime.now().strftime("%Y-%m-%d"),
-                'meal_type': meal_type,
-                'food_item': food_name,
-                'calories': float(calories),
-                'protein': float(protein),
-                'carbs': float(carbs),
-                'fat': float(fat)
-            }
-            save_food_log(entry)
-            st.success("✅ Food item added to log!")
-    
-    # Display today's food log
-    st.subheader("Today's Food Log")
-    food_log = load_food_log(datetime.now().strftime("%Y-%m-%d"))
-    if not food_log.empty:
-        st.dataframe(food_log)
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.metric("Total Calories", f"{food_log['calories'].sum():.0f} kcal")
-        with col2:
-            st.metric("Total Protein", f"{food_log['protein'].sum():.1f}g")
-        with col3:
-            st.metric("Total Carbs", f"{food_log['carbs'].sum():.1f}g")
-
-def exercise_page():
-    st.header("Exercise Tracker")
-    
-    user_data = load_user_data()
-    if not user_data:
-        st.warning("Please complete your profile first!")
-        return
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.subheader("Log Exercise")
-        exercise_type = st.selectbox("Exercise Type", ["Cardio", "Strength", "Flexibility", "HIIT"])
-        exercise = st.selectbox("Exercise", ["Running", "Cycling", "Swimming", "Push-ups", "Yoga", "Burpees"])
-        duration = st.number_input("Duration (minutes)", 1, 180)
-        
-        calories_burned = duration * 7  # Example calculation (adjust based on exercise type)
-        
-        if st.button("Log Exercise"):
-            entry = {
-                'date': datetime.now().strftime("%Y-%m-%d"),
-                'exercise_type': exercise_type,
-                'exercise': exercise,
-                'duration': duration,
-                'calories_burned': calories_burned
-            }
-            save_workout_log(entry)
-            st.success("Exercise logged successfully!")
-    
-    with col2:
-        st.subheader("Today's Exercise Summary")
-        workout_log = load_workout_log(datetime.now().strftime("%Y-%m-%d"))
-        if not workout_log.empty:
-            st.dataframe(workout_log)
-            st.metric("Total Calories Burned", f"{workout_log['calories_burned'].sum():.0f}")
-
-def progress_tracker_page():
-    st.header("Progress Tracker")
-    
-    user_data = load_user_data()
-    if not user_data:
-        st.warning("Please complete your profile first!")
-        return
-    
-    # Weight tracking
-    progress_df = load_progress()
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        st.subheader("Log Today's Weight")
-        weight = st.number_input("Weight (kg)", 30.0, 200.0, user_data['weight'])
-        if st.button("Log Weight"):
-            entry = {
-                'date': datetime.now().strftime("%Y-%m-%d"),
-                'weight': weight,
-                'calories_consumed': 0,  # Placeholder
-                'exercise_minutes': 0    # Placeholder
-            }
-            save_progress(entry)
-            st.success("Weight logged successfully!")
-    
-    # Progress visualization
-    if not progress_df.empty:
-        st.subheader("Weight Progress")
-        fig = px.line(progress_df, x='date', y='weight', 
-                     title='Weight Over Time')
-        st.plotly_chart(fig)
-        
-        # Calculate stats
-        if len(progress_df) > 1:
-            total_loss = progress_df['weight'].iloc[-1] - progress_df['weight'].iloc[0]
-            st.metric("Total Weight Change", f"{total_loss:.1f} kg")
-
-    # Ensure all database operations use the username to fetch/save user-specific data
+        # Progress visualization
+        if not progress_df.empty:
+            st.subheader("Weight Progress")
+            fig = px.line(progress_df, x='date', y='weight', 
+                         title='Weight Over Time')
+            st.plotly_chart(fig)
+            
+            # Calculate stats
+            if len(progress_df) > 1:
+                total_loss = progress_df['weight'].iloc[-1] - progress_df['weight'].iloc[0]
+                st.metric("Total Weight Change", f"{total_loss:.1f} kg")
 
     def main():
         st.set_page_config(page_title="Health & Fitness Tracker", layout="wide")
