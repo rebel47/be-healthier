@@ -1,10 +1,6 @@
-Here’s a professional and comprehensive `README.md` file for your GitHub repository. This file focuses on the Health & Fitness Tracker project, excluding the authentication part.
-
----
-
 # Health & Fitness Tracker
 
-![Health & Fitness Tracker](https://img.shields.io/badge/version-1.0.0-blue) 
+![Health & Fitness Tracker](https://img.shields.io/badge/version-0.0.1-blue) 
 ![Python](https://img.shields.io/badge/Python-3.8%2B-green)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.14.0-orange)
 
@@ -92,21 +88,6 @@ The **Health & Fitness Tracker** is a web-based application built with Streamlit
 
 ---
 
-## Screenshots
-
-### Home Page
-![Home Page](screenshots/home.png)
-
-### Food Analyzer
-![Food Analyzer](screenshots/food_analyzer.png)
-
-### Exercise Tracker
-![Exercise Tracker](screenshots/exercise_tracker.png)
-
-### Progress Tracker
-![Progress Tracker](screenshots/progress_tracker.png)
-
----
 
 ## Technologies Used
 
@@ -117,34 +98,10 @@ The **Health & Fitness Tracker** is a web-based application built with Streamlit
 
 ---
 
-## Contributing
-
-Contributions are welcome! If you'd like to contribute to this project, please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/your-feature-name`).
-3. Commit your changes (`git commit -m 'Add some feature'`).
-4. Push to the branch (`git push origin feature/your-feature-name`).
-5. Open a pull request.
-
----
-
 
 ## Acknowledgments
 
 - Thanks to the Streamlit team for creating an amazing framework for building data apps.
 - Special thanks to the open-source community for providing valuable libraries and tools.
-
----
-
-## Contact
-
-For questions or feedback, feel free to reach out:
-
-- **Email**: your-email@example.com
-- **GitHub**: [your-username](https://github.com/your-username)
-- **LinkedIn**: [Your Name](https://linkedin.com/in/your-profile)
-
----
 
 Enjoy tracking your health and fitness goals with the **Health & Fitness Tracker**! 🚀
