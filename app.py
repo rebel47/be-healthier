@@ -8,6 +8,9 @@ from data_manager import init_db, save_user_data, load_user_data, save_food_log,
 from utils import calculate_bmi, get_bmi_category, calculate_daily_calories
 from nutrition_analyzer import NutritionAnalyzer, get_analysis_prompt
 
+# Set page config FIRST
+st.set_page_config(page_title="Health & Fitness Tracker", layout="wide")
+
 # Initialize SQLite database for user credentials
 user_credentials_db_path = "user_credentials.db"
 user_conn = sqlite3.connect(user_credentials_db_path)
