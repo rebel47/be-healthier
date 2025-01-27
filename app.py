@@ -93,12 +93,12 @@ if st.session_state.get("authentication_status"):
         st.rerun()  # Refresh the page to update the UI
 
     # Initialize user-specific database
-    init_db(st.session_state["username"])
+    init_db()
 
     # Page Functions
     def home_page():
         st.title("Health & Fitness Tracker")
-        user_data = load_user_data(st.session_state["username"])
+        user_data = load_user_data()
         
         if not user_data:
             st.info("👋 Welcome! Please complete your profile to get started.")
@@ -118,20 +118,20 @@ if st.session_state.get("authentication_status"):
                 user_data['weight'], user_data['height'], user_data['age'],
                 user_data['gender'], user_data['exercise_level'], user_data['goal']
             )
-            food_log = load_food_log(st.session_state["username"], datetime.now().strftime("%Y-%m-%d"))
+            food_log = load_food_log(datetime.now().strftime("%Y-%m-%d"))
             calories_consumed = food_log['calories'].sum()
             st.metric("Calories", f"{calories_consumed}/{daily_calories}",
               delta=float(daily_calories - calories_consumed))  # Convert to float
             
         with col3:
             st.subheader("Exercise Log")
-            workout_log = load_workout_log(st.session_state["username"], datetime.now().strftime("%Y-%m-%d"))
+            workout_log = load_workout_log(datetime.now().strftime("%Y-%m-%d"))
             calories_burned = workout_log['calories_burned'].sum()
             st.metric("Calories Burned", f"{calories_burned}", delta=float(calories_consumed - calories_burned))
 
     def profile_page():
         st.header("User Profile")
-        user_data = load_user_data(st.session_state["username"])
+        user_data = load_user_data()
         
         col1, col2 = st.columns(2)
         
@@ -189,7 +189,7 @@ if st.session_state.get("authentication_status"):
                 "allergies": allergies,
                 "last_updated": datetime.now().strftime("%Y-%m-%d")
             }
-            save_user_data(st.session_state["username"], user_data)
+            save_user_data(user_data)
             st.success("Profile updated successfully!")
 
     def food_analyzer_page():
@@ -292,7 +292,7 @@ if st.session_state.get("authentication_status"):
                         'carbs': float(total_carbs),
                         'fat': float(total_fat)
                     }
-                    save_food_log(st.session_state["username"], entry)
+                    save_food_log(entry)
                     st.success("✅ Food added to log successfully!")
                     # Clear the analysis result after adding to log
                     st.session_state.analysis_result = None
@@ -319,12 +319,12 @@ if st.session_state.get("authentication_status"):
                     'carbs': float(carbs),
                     'fat': float(fat)
                 }
-                save_food_log(st.session_state["username"], entry)
+                save_food_log(entry)
                 st.success("✅ Food item added to log!")
         
         # Display today's food log
         st.subheader("Today's Food Log")
-        food_log = load_food_log(st.session_state["username"], datetime.now().strftime("%Y-%m-%d"))
+        food_log = load_food_log(datetime.now().strftime("%Y-%m-%d"))
         if not food_log.empty:
             st.dataframe(food_log)
             col1, col2, col3 = st.columns(3)
@@ -338,7 +338,7 @@ if st.session_state.get("authentication_status"):
     def exercise_page():
         st.header("Exercise Tracker")
         
-        user_data = load_user_data(st.session_state["username"])
+        user_data = load_user_data()
         if not user_data:
             st.warning("Please complete your profile first!")
             return
@@ -361,12 +361,12 @@ if st.session_state.get("authentication_status"):
                     'duration': duration,
                     'calories_burned': calories_burned
                 }
-                save_workout_log(st.session_state["username"], entry)
+                save_workout_log(entry)
                 st.success("Exercise logged successfully!")
         
         with col2:
             st.subheader("Today's Exercise Summary")
-            workout_log = load_workout_log(st.session_state["username"], datetime.now().strftime("%Y-%m-%d"))
+            workout_log = load_workout_log(datetime.now().strftime("%Y-%m-%d"))
             if not workout_log.empty:
                 st.dataframe(workout_log)
                 st.metric("Total Calories Burned", f"{workout_log['calories_burned'].sum():.0f}")
@@ -374,13 +374,13 @@ if st.session_state.get("authentication_status"):
     def progress_tracker_page():
         st.header("Progress Tracker")
         
-        user_data = load_user_data(st.session_state["username"])
+        user_data = load_user_data()
         if not user_data:
             st.warning("Please complete your profile first!")
             return
         
         # Weight tracking
-        progress_df = load_progress(st.session_state["username"])
+        progress_df = load_progress()
         
         col1, col2 = st.columns(2)
         with col1:
@@ -393,7 +393,7 @@ if st.session_state.get("authentication_status"):
                     'calories_consumed': 0,  # Placeholder
                     'exercise_minutes': 0    # Placeholder
                 }
-                save_progress(st.session_state["username"], entry)
+                save_progress(entry)
                 st.success("Weight logged successfully!")
         
         # Progress visualization
@@ -423,7 +423,7 @@ if st.session_state.get("authentication_status"):
         page = st.sidebar.radio("Go to", list(pages.keys()))
         
         # Show user stats in sidebar if profile exists
-        user_data = load_user_data(st.session_state["username"])
+        user_data = load_user_data()
         if user_data:
             st.sidebar.subheader("Daily Targets")
             daily_calories = calculate_daily_calories(
@@ -432,8 +432,8 @@ if st.session_state.get("authentication_status"):
             )
             
             # Get today's totals
-            food_log = load_food_log(st.session_state["username"], datetime.now().strftime("%Y-%m-%d"))
-            workout_log = load_workout_log(st.session_state["username"], datetime.now().strftime("%Y-%m-%d"))
+            food_log = load_food_log(datetime.now().strftime("%Y-%m-%d"))
+            workout_log = load_workout_log(datetime.now().strftime("%Y-%m-%d"))
             
             calories_consumed = food_log['calories'].sum()
             calories_burned = workout_log['calories_burned'].sum()
