@@ -1,15 +1,14 @@
 import google.generativeai as genai
 from PIL import Image
 import json
-from dotenv import load_dotenv
-import os
+import streamlit as st  # Add this import
 
-# Load environment variables
-load_dotenv()  # Ensure this is called to load the .env file
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+# Load the API key from Streamlit secrets
+GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
 
 if not GOOGLE_API_KEY:
-    raise ValueError("GOOGLE_API_KEY not found in environment variables. Please set it in a .env file or as an environment variable.")
+    st.error("GOOGLE_API_KEY not found in Streamlit secrets. Please set it in the Streamlit Cloud settings.")
+    st.stop()  # Stop the app if the API key is missing
 
 # Configure the Gemini API
 genai.configure(api_key=GOOGLE_API_KEY)
