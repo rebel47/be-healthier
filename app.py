@@ -11,7 +11,8 @@ init_db()
 
 # Page Functions
 def home_page():
-    st.title("Health & Fitness Tracker")
+    st.title("Welcome to Be-Healthier!")
+    st.text("- Developed By: Mohammad Ayaz Alam")
     user_data = load_user_data()
     
     if not user_data:
