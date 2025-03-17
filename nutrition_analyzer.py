@@ -14,7 +14,7 @@ genai.configure(api_key=GOOGLE_API_KEY)
 
 class NutritionAnalyzer:
     def __init__(self):
-        self.model = genai.GenerativeModel("gemini-1.5-flash")
+        self.model = genai.GenerativeModel("gemini-2.0-flash")
         self.thresholds = {
             "calories": 300,
             "sugar": 25,
